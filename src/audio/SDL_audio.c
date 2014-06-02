@@ -43,6 +43,7 @@ static SDL_AudioDevice *open_devices[16];
  *  to have a complete list here and saves yet-another block of #ifdefs...
  *  Please see bootstrap[], below, for the actual #ifdef mess.
  */
+extern AudioBootStrap NACLAUD_bootstrap;
 extern AudioBootStrap BSD_AUDIO_bootstrap;
 extern AudioBootStrap DSP_bootstrap;
 extern AudioBootStrap ALSA_bootstrap;
@@ -71,6 +72,9 @@ extern AudioBootStrap SNDIO_bootstrap;
 
 /* Available audio drivers */
 static const AudioBootStrap *const bootstrap[] = {
+#if SDL_AUDIO_DRIVER_NACL
+    &NACLAUD_bootstrap,
+#endif
 #if SDL_AUDIO_DRIVER_PULSEAUDIO
     &PULSEAUDIO_bootstrap,
 #endif

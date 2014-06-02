@@ -53,6 +53,9 @@
 
 /* Available video drivers */
 static VideoBootStrap *bootstrap[] = {
+#if SDL_VIDEO_DRIVER_NACL
+    &NACL_bootstrap,
+#endif
 #if SDL_VIDEO_DRIVER_COCOA
     &COCOA_bootstrap,
 #endif

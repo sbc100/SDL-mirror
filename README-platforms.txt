@@ -25,6 +25,7 @@ Platforms supported by volunteers
 Haiku - maintained by Axel Dörfler <axeld@pinc-software.de>
 PSP - maintained by 527721088@qq.com
 Pandora - maintained by Scott Smith <pickle136@sbcglobal.net>
+Chrome (Native Client) - maintained by Sam Clegg <sbc@chromium.org>
 
 Platforms that need maintainers
 ===============================

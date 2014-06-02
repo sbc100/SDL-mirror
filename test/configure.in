@@ -65,6 +65,19 @@ case "$host" in
         MATHLIB=""
         SYS_GL_LIBS="-lGLES_CM"
         ;;
+    *-*-nacl*)
+        case "$CC" in
+            *pnacl*)
+                EXE=".pexe"
+                ;;
+            *)
+                EXE=".nexe"
+                ;;
+        esac
+        CFLAGS="$CFLAGS -std=gnu99"
+        MATHLIB="-lm"
+        SYS_GL_LIBS=""
+        ;;
     *)
         dnl Oh well, call it Unix...
         ISUNIX="true"
@@ -87,6 +100,12 @@ AM_PATH_SDL2($SDL_VERSION,
 )
 CFLAGS="$CFLAGS $SDL_CFLAGS"
 LIBS="$LIBS -lSDL2_test $SDL_LIBS"
+
+case "$host" in
+    *-*-nacl*)
+        LIBS="$LIBS -lnacl_io -l${NACL_CPP_LIB} -lm"
+        ;;
+esac
 
 dnl Check for X11 path, needed for OpenGL on some systems
 AC_PATH_X

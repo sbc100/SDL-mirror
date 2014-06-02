@@ -5,6 +5,7 @@ srcdir  = @srcdir@
 CC      = @CC@
 EXE	= @EXE@
 CFLAGS  = @CFLAGS@ -g
+LDFLAGS = @LDFLAGS@
 LIBS	= @LIBS@
 
 TARGETS = \
@@ -64,16 +65,16 @@ Makefile: $(srcdir)/Makefile.in
 	$(SHELL) config.status $@
 
 checkkeys$(EXE): $(srcdir)/checkkeys.c
-	$(CC) -o $@ $^ $(CFLAGS) $(LIBS)
+	$(CC) -o $@ $^ $(CFLAGS) $(LDFLAGS) $(LIBS)
 
 loopwave$(EXE): $(srcdir)/loopwave.c
-	$(CC) -o $@ $^ $(CFLAGS) $(LIBS)
+	$(CC) -o $@ $^ $(CFLAGS) $(LDFLAGS) $(LIBS)
 
 testresample$(EXE): $(srcdir)/testresample.c
-	$(CC) -o $@ $^ $(CFLAGS) $(LIBS)
+	$(CC) -o $@ $^ $(CFLAGS) $(LDFLAGS) $(LIBS)
 
 testaudioinfo$(EXE): $(srcdir)/testaudioinfo.c
-	$(CC) -o $@ $^ $(CFLAGS) $(LIBS)
+	$(CC) -o $@ $^ $(CFLAGS) $(LDFLAGS) $(LIBS)
 
 testautomation$(EXE): $(srcdir)/testautomation.c \
 		      $(srcdir)/testautomation_audio.c \
@@ -94,158 +95,158 @@ testautomation$(EXE): $(srcdir)/testautomation.c \
 		      $(srcdir)/testautomation_timer.c \
 		      $(srcdir)/testautomation_video.c \
 		      $(srcdir)/testautomation_hints.c
-	$(CC) -o $@ $^ $(CFLAGS) $(LIBS) 
+	$(CC) -o $@ $^ $(CFLAGS) $(LDFLAGS) $(LIBS) 
 
 testmultiaudio$(EXE): $(srcdir)/testmultiaudio.c
-	$(CC) -o $@ $^ $(CFLAGS) $(LIBS)
+	$(CC) -o $@ $^ $(CFLAGS) $(LDFLAGS) $(LIBS)
 
 testatomic$(EXE): $(srcdir)/testatomic.c
-	$(CC) -o $@ $^ $(CFLAGS) $(LIBS)
+	$(CC) -o $@ $^ $(CFLAGS) $(LDFLAGS) $(LIBS)
 
 testintersections$(EXE): $(srcdir)/testintersections.c
-	$(CC) -o $@ $^ $(CFLAGS) $(LIBS)
+	$(CC) -o $@ $^ $(CFLAGS) $(LDFLAGS) $(LIBS)
 
 testrelative$(EXE): $(srcdir)/testrelative.c
-	$(CC) -o $@ $^ $(CFLAGS) $(LIBS)
+	$(CC) -o $@ $^ $(CFLAGS) $(LDFLAGS) $(LIBS)
 
 testdraw2$(EXE): $(srcdir)/testdraw2.c
-	$(CC) -o $@ $^ $(CFLAGS) $(LIBS)
+	$(CC) -o $@ $^ $(CFLAGS) $(LDFLAGS) $(LIBS)
 
 testdrawchessboard$(EXE): $(srcdir)/testdrawchessboard.c
-	$(CC) -o $@ $^ $(CFLAGS) $(LIBS)
+	$(CC) -o $@ $^ $(CFLAGS) $(LDFLAGS) $(LIBS)
 
 testdropfile$(EXE): $(srcdir)/testdropfile.c
-	$(CC) -o $@ $^ $(CFLAGS) $(LIBS)
+	$(CC) -o $@ $^ $(CFLAGS) $(LDFLAGS) $(LIBS)
 
 testerror$(EXE): $(srcdir)/testerror.c
-	$(CC) -o $@ $^ $(CFLAGS) $(LIBS)
+	$(CC) -o $@ $^ $(CFLAGS) $(LDFLAGS) $(LIBS)
 
 testfile$(EXE): $(srcdir)/testfile.c
-	$(CC) -o $@ $^ $(CFLAGS) $(LIBS)
+	$(CC) -o $@ $^ $(CFLAGS) $(LDFLAGS) $(LIBS)
 
 testgamecontroller$(EXE): $(srcdir)/testgamecontroller.c
-	$(CC) -o $@ $^ $(CFLAGS) $(LIBS)
+	$(CC) -o $@ $^ $(CFLAGS) $(LDFLAGS) $(LIBS)
  
 testgesture$(EXE): $(srcdir)/testgesture.c
-	$(CC) -o $@ $^ $(CFLAGS) $(LIBS) @MATHLIB@
+	$(CC) -o $@ $^ $(CFLAGS) $(LDFLAGS) $(LIBS) @MATHLIB@
  
 testgl2$(EXE): $(srcdir)/testgl2.c
-	$(CC) -o $@ $^ $(CFLAGS) $(LIBS) @MATHLIB@
+	$(CC) -o $@ $^ $(CFLAGS) $(LDFLAGS) $(LIBS) @MATHLIB@
 
 testgles$(EXE): $(srcdir)/testgles.c
-	$(CC) -o $@ $^ $(CFLAGS) $(LIBS) @GLESLIB@ @MATHLIB@
+	$(CC) -o $@ $^ $(CFLAGS) $(LDFLAGS) $(LIBS) @GLESLIB@ @MATHLIB@
 
 testgles2$(EXE): $(srcdir)/testgles2.c
-	$(CC) -o $@ $^ $(CFLAGS) $(LIBS) @MATHLIB@
+	$(CC) -o $@ $^ $(CFLAGS) $(LDFLAGS) $(LIBS) @MATHLIB@
 
 testhaptic$(EXE): $(srcdir)/testhaptic.c
-	$(CC) -o $@ $^ $(CFLAGS) $(LIBS)
+	$(CC) -o $@ $^ $(CFLAGS) $(LDFLAGS) $(LIBS)
 
 testhotplug$(EXE): $(srcdir)/testhotplug.c
-	$(CC) -o $@ $^ $(CFLAGS) $(LIBS)
+	$(CC) -o $@ $^ $(CFLAGS) $(LDFLAGS) $(LIBS)
 
 testrumble$(EXE): $(srcdir)/testrumble.c
-	$(CC) -o $@ $^ $(CFLAGS) $(LIBS)
+	$(CC) -o $@ $^ $(CFLAGS) $(LDFLAGS) $(LIBS)
 
 testthread$(EXE): $(srcdir)/testthread.c
-	$(CC) -o $@ $^ $(CFLAGS) $(LIBS)
+	$(CC) -o $@ $^ $(CFLAGS) $(LDFLAGS) $(LIBS)
 
 testiconv$(EXE): $(srcdir)/testiconv.c
-	$(CC) -o $@ $^ $(CFLAGS) $(LIBS)
+	$(CC) -o $@ $^ $(CFLAGS) $(LDFLAGS) $(LIBS)
 
 testime$(EXE): $(srcdir)/testime.c
-	$(CC) -o $@ $^ $(CFLAGS) $(LIBS) @SDL_TTF_LIB@
+	$(CC) -o $@ $^ $(CFLAGS) $(LDFLAGS) $(LIBS) @SDL_TTF_LIB@
 
 testjoystick$(EXE): $(srcdir)/testjoystick.c
-	$(CC) -o $@ $^ $(CFLAGS) $(LIBS)
+	$(CC) -o $@ $^ $(CFLAGS) $(LDFLAGS) $(LIBS)
 
 testkeys$(EXE): $(srcdir)/testkeys.c
-	$(CC) -o $@ $^ $(CFLAGS) $(LIBS)
+	$(CC) -o $@ $^ $(CFLAGS) $(LDFLAGS) $(LIBS)
 
 testloadso$(EXE): $(srcdir)/testloadso.c
-	$(CC) -o $@ $^ $(CFLAGS) $(LIBS)
+	$(CC) -o $@ $^ $(CFLAGS) $(LDFLAGS) $(LIBS)
 
 testlock$(EXE): $(srcdir)/testlock.c
-	$(CC) -o $@ $^ $(CFLAGS) $(LIBS)
+	$(CC) -o $@ $^ $(CFLAGS) $(LDFLAGS) $(LIBS)
 
 ifeq (@ISMACOSX@,true)
 testnative$(EXE): $(srcdir)/testnative.c \
 			$(srcdir)/testnativecocoa.m \
 			$(srcdir)/testnativex11.c
-	$(CC) -o $@ $^ $(CFLAGS) $(LIBS) -framework Cocoa @XLIB@
+	$(CC) -o $@ $^ $(CFLAGS) $(LDFLAGS) $(LIBS) -framework Cocoa @XLIB@
 endif
 
 ifeq (@ISWINDOWS@,true)
 testnative$(EXE): $(srcdir)/testnative.c \
 			$(srcdir)/testnativew32.c
-	$(CC) -o $@ $^ $(CFLAGS) $(LIBS)
+	$(CC) -o $@ $^ $(CFLAGS) $(LDFLAGS) $(LIBS)
 endif
 
 ifeq (@ISUNIX@,true)
 testnative$(EXE): $(srcdir)/testnative.c \
 			$(srcdir)/testnativex11.c
-	$(CC) -o $@ $^ $(CFLAGS) $(LIBS) @XLIB@
+	$(CC) -o $@ $^ $(CFLAGS) $(LDFLAGS) $(LIBS) @XLIB@
 endif
 
 testoverlay2$(EXE): $(srcdir)/testoverlay2.c
-	$(CC) -o $@ $^ $(CFLAGS) $(LIBS)
+	$(CC) -o $@ $^ $(CFLAGS) $(LDFLAGS) $(LIBS)
 
 testplatform$(EXE): $(srcdir)/testplatform.c
-	$(CC) -o $@ $^ $(CFLAGS) $(LIBS)
+	$(CC) -o $@ $^ $(CFLAGS) $(LDFLAGS) $(LIBS)
 
 testpower$(EXE): $(srcdir)/testpower.c
-	$(CC) -o $@ $^ $(CFLAGS) $(LIBS)
+	$(CC) -o $@ $^ $(CFLAGS) $(LDFLAGS) $(LIBS)
 
 testfilesystem$(EXE): $(srcdir)/testfilesystem.c
-	$(CC) -o $@ $^ $(CFLAGS) $(LIBS)
+	$(CC) -o $@ $^ $(CFLAGS) $(LDFLAGS) $(LIBS)
 
 testrendertarget$(EXE): $(srcdir)/testrendertarget.c
-	$(CC) -o $@ $^ $(CFLAGS) $(LIBS)
+	$(CC) -o $@ $^ $(CFLAGS) $(LDFLAGS) $(LIBS)
 
 testscale$(EXE): $(srcdir)/testscale.c
-	$(CC) -o $@ $^ $(CFLAGS) $(LIBS)
+	$(CC) -o $@ $^ $(CFLAGS) $(LDFLAGS) $(LIBS)
 
 testsem$(EXE): $(srcdir)/testsem.c
-	$(CC) -o $@ $^ $(CFLAGS) $(LIBS)
+	$(CC) -o $@ $^ $(CFLAGS) $(LDFLAGS) $(LIBS)
 
 testshader$(EXE): $(srcdir)/testshader.c
-	$(CC) -o $@ $^ $(CFLAGS) $(LIBS) @GLLIB@ @MATHLIB@
+	$(CC) -o $@ $^ $(CFLAGS) $(LDFLAGS) $(LIBS) @GLLIB@ @MATHLIB@
 
 testshape$(EXE): $(srcdir)/testshape.c
-	$(CC) -o $@ $^ $(CFLAGS) $(LIBS)
+	$(CC) -o $@ $^ $(CFLAGS) $(LDFLAGS) $(LIBS)
 
 testsprite2$(EXE): $(srcdir)/testsprite2.c
-	$(CC) -o $@ $^ $(CFLAGS) $(LIBS)
+	$(CC) -o $@ $^ $(CFLAGS) $(LDFLAGS) $(LIBS)
 
 testspriteminimal$(EXE): $(srcdir)/testspriteminimal.c
-	$(CC) -o $@ $^ $(CFLAGS) $(LIBS) @MATHLIB@
+	$(CC) -o $@ $^ $(CFLAGS) $(LDFLAGS) $(LIBS) @MATHLIB@
 
 teststreaming$(EXE): $(srcdir)/teststreaming.c
-	$(CC) -o $@ $^ $(CFLAGS) $(LIBS) @MATHLIB@
+	$(CC) -o $@ $^ $(CFLAGS) $(LDFLAGS) $(LIBS) @MATHLIB@
 
 testtimer$(EXE): $(srcdir)/testtimer.c
-	$(CC) -o $@ $^ $(CFLAGS) $(LIBS)
+	$(CC) -o $@ $^ $(CFLAGS) $(LDFLAGS) $(LIBS)
 
 testver$(EXE): $(srcdir)/testver.c
-	$(CC) -o $@ $^ $(CFLAGS) $(LIBS)
+	$(CC) -o $@ $^ $(CFLAGS) $(LDFLAGS) $(LIBS)
 
 testviewport$(EXE): $(srcdir)/testviewport.c
-	$(CC) -o $@ $^ $(CFLAGS) $(LIBS)
+	$(CC) -o $@ $^ $(CFLAGS) $(LDFLAGS) $(LIBS)
 
 testwm2$(EXE): $(srcdir)/testwm2.c
-	$(CC) -o $@ $^ $(CFLAGS) $(LIBS)
+	$(CC) -o $@ $^ $(CFLAGS) $(LDFLAGS) $(LIBS)
 
 torturethread$(EXE): $(srcdir)/torturethread.c
-	$(CC) -o $@ $^ $(CFLAGS) $(LIBS)
+	$(CC) -o $@ $^ $(CFLAGS) $(LDFLAGS) $(LIBS)
 
 testrendercopyex$(EXE): $(srcdir)/testrendercopyex.c
-	$(CC) -o $@ $^ $(CFLAGS) $(LIBS) @MATHLIB@
+	$(CC) -o $@ $^ $(CFLAGS) $(LDFLAGS) $(LIBS) @MATHLIB@
 
 testmessage$(EXE): $(srcdir)/testmessage.c
-	$(CC) -o $@ $^ $(CFLAGS) $(LIBS)
+	$(CC) -o $@ $^ $(CFLAGS) $(LDFLAGS) $(LIBS)
 
 controllermap$(EXE): $(srcdir)/controllermap.c
-	$(CC) -o $@ $^ $(CFLAGS) $(LIBS)
+	$(CC) -o $@ $^ $(CFLAGS) $(LDFLAGS) $(LIBS)
 
 
 clean:

@@ -73,6 +73,7 @@ illegal_instruction(int sig)
 }
 #endif /* HAVE_SETJMP */
 
+#if SDL_ASSEMBLY_ROUTINES
 static SDL_INLINE int
 CPU_haveCPUID(void)
 {
@@ -222,6 +223,14 @@ CPU_getCPUIDFeatures(void)
     }
     return features;
 }
+
+#else // SDL_ASSEMBLY_ROUTINES
+static __inline__ int CPU_haveCPUID(void) { return 0; }
+static __inline__ int CPU_getCPUIDFeaturesExt(void) { return 0; }
+static __inline__ int CPU_getCPUIDFeatures(void) { return 0; }
+#define cpuid(func, a, b, c, d) \
+    a = b = c = d = 0
+#endif // SDL_ASSEMBLY_ROUTINES
 
 static SDL_INLINE int
 CPU_haveRDTSC(void)

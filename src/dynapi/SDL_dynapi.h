@@ -43,12 +43,18 @@
 #include "TargetConditionals.h"
 #endif
 
+#ifdef __native_client__
+#include <stdlib.h>
+#endif
+
 #if TARGET_OS_IPHONE  /* probably not useful on iOS. */
 #define SDL_DYNAMIC_API 0
 #elif SDL_BUILDING_WINRT /* probaly not useful on WinRT, given current .dll loading restrictions */
 #define SDL_DYNAMIC_API 0
 #elif defined(__clang_analyzer__)
 #define SDL_DYNAMIC_API 0  /* Turn off for static analysis, so reports are more clear. */
+#elif defined(__native_client__) && defined(_NEWLIB_VERSION)
+#define SDL_DYNAMIC_API 0  /* NaCl newlib has no dynamic library suppport. */
 #else   /* everyone else. */
 #define SDL_DYNAMIC_API 1
 #endif
