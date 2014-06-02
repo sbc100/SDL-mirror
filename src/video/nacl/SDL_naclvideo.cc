@@ -3,7 +3,7 @@
 #include <assert.h>
 
 #include "SDL_naclvideo.h"
-#include "SDL_naclevents_c.h"
+#include "SDL_naclevents.h"
 #include "SDL_naclopengles.h"
 #include "SDL_naclframebuffer.h"
 #include "SDL_naclwindow.h"
@@ -21,9 +21,9 @@
 #include <ppapi/c/ppb_image_data.h>
 #include <ppapi/c/ppb_input_event.h>
 #include <ppapi/c/ppb_instance.h>
-//#include <ppapi/c/ppb_opengles2.h>
+#include <ppapi/c/ppb_opengles2.h>
 #include <ppapi/c/ppb_var.h>
-//#include <ppapi/gles2/gl2ext_ppapi.h>
+#include <ppapi/gles2/gl2ext_ppapi.h>
 
 PP_Instance g_nacl_pp_instance;
 PPB_GetInterface g_nacl_get_interface;
@@ -32,7 +32,7 @@ const PPB_Instance_1_0 *g_nacl_instance_interface;
 const PPB_ImageData_1_0 *g_nacl_image_data_interface;
 const PPB_Graphics2D_1_1 *g_nacl_graphics2d_interface;
 const PPB_Graphics3D_1_0 *g_nacl_graphics3d_interface;
-//const PPB_OpenGLES2 *g_nacl_opengles2_interface;
+const PPB_OpenGLES2 *g_nacl_opengles2_interface;
 
 const PPB_InputEvent_1_0 *g_nacl_input_event_interface;
 const PPB_MouseInputEvent_1_1 *g_nacl_mouse_input_event_interface;
@@ -63,15 +63,11 @@ extern "C" {
 
 #define NACLVID_DRIVER_NAME "nacl"
 
-//FIXME: SDL_sem *Android_PauseSem = NULL, *Android_ResumeSem = NULL;
-
-    //FIXME: somebody has to call this!!
-    // the init routine in SDLmain.a does. should be ok.
 void SDL_NACL_SetInstance(PP_Instance instance, PPB_GetInterface get_interface,
                           int width, int height) {
-fprintf(stderr, "SDL_NACL_SetInstance\n");
-  bool is_resize = g_nacl_pp_instance && (width != g_nacl_video_width ||
-                                          height != g_nacl_video_height);
+  fprintf(stderr, "SDL_NACL_SetInstance\n");
+  //bool is_resize = g_nacl_pp_instance && (width != g_nacl_video_width ||
+                                          //height != g_nacl_video_height);
 
   g_nacl_pp_instance = instance;
   g_nacl_get_interface = get_interface;
@@ -85,8 +81,8 @@ fprintf(stderr, "SDL_NACL_SetInstance\n");
       (const PPB_Graphics2D_1_1 *)get_interface(PPB_GRAPHICS_2D_INTERFACE_1_1);
   g_nacl_graphics3d_interface =
       (const PPB_Graphics3D_1_0 *)get_interface(PPB_GRAPHICS_3D_INTERFACE_1_0);
-//  g_nacl_opengles2_interface =
-//      (const PPB_OpenGLES2 *)get_interface(PPB_OPENGLES2_INTERFACE_1_0);
+  g_nacl_opengles2_interface =
+      (const PPB_OpenGLES2 *)get_interface(PPB_OPENGLES2_INTERFACE_1_0);
   g_nacl_input_event_interface =
       (const PPB_InputEvent_1_0 *)get_interface(PPB_INPUT_EVENT_INTERFACE_1_0);
   g_nacl_mouse_input_event_interface =
@@ -103,11 +99,12 @@ fprintf(stderr, "SDL_NACL_SetInstance\n");
   g_nacl_video_width = width;
   g_nacl_video_height = height;
   // FIXME: we are handling this in Android_SetScreenResolution now
-//   if (is_resize && current_video) {
-//     current_video->driverdata->ow = width;
-//     current_video->driverdata->oh = height;
-    //FIXME: SDL_PrivateResize(width, height);
-  }
+  //if (is_resize && current_video) {
+  //  current_video->driverdata->ow = width;
+  //  current_video->driverdata->oh = height;
+  //  SDL_PrivateResize(width, height);
+  //}
+}
 
 
 // static void flush(void *data, int32_t unused);

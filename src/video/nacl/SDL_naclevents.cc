@@ -1,14 +1,15 @@
+#include "../../SDL_internal.h"
 #include "SDL_config.h"
 
 #include "SDL_nacl.h"
+#include "SDL.h"
 
 extern "C" {
-#include "SDL.h"
 #include "../../events/SDL_sysevents.h"
 #include "../../events/SDL_events_c.h"
 }
 
-#include "SDL_naclevents_c.h"
+#include "SDL_naclevents.h"
 #include "eventqueue.h"
 #include <ppapi/c/pp_point.h>
 #include <ppapi/c/pp_var.h>
@@ -21,7 +22,6 @@ extern const PPB_InputEvent_1_0 *g_nacl_input_event_interface;
 extern const PPB_MouseInputEvent_1_1 *g_nacl_mouse_input_event_interface;
 extern const PPB_WheelInputEvent_1_0 *g_nacl_wheel_input_event_interface;
 extern const PPB_KeyboardInputEvent_1_0 *g_nacl_keyboard_input_event_interface;
-//extern const PPB_IME_INPUT_EVENT_INTERFACE_1_0 *g_nacl_ime_input_event_interface;
 extern const PPB_Var_1_1 *g_nacl_var_interface;
 
 static EventQueue event_queue;

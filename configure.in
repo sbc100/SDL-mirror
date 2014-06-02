@@ -2667,7 +2667,6 @@ case "$host" in
   *-nacl)
       ARCH=nacl
       CheckNativeClient
-      CheckOpenGLRegal
       CheckDummyAudio
       CheckDummyVideo
       CheckInputEvents

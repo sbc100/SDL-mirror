@@ -23,17 +23,15 @@
 #ifndef _SDL_naclwindow_h
 #define _SDL_naclwindow_h
 
-//#include "../SDL_egl.h"
-
 extern int NACL_CreateWindow(_THIS, SDL_Window * window);
 extern void NACL_SetWindowTitle(_THIS, SDL_Window * window);
 extern void NACL_DestroyWindow(_THIS, SDL_Window * window);
 
 // FIXME: does not make sense since it is unlikely there will ever be more
 // than one window
-// struct SDL_WindowData {   
+// struct SDL_WindowData {
 // };
 
-#endif /* _SDL_androidwindow_h */
+#endif /* _SDL_naclwindow_h */
 
 /* vi: set ts=4 sw=4 expandtab: */

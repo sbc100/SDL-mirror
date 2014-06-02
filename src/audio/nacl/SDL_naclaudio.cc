@@ -1,3 +1,4 @@
+#include "../../SDL_internal.h"
 #include "SDL_config.h"
 #include "SDL_naclaudio.h"
 

@@ -5,5 +5,3 @@
 
 //FIXME: extern void NACL_InitOSKeymap(_THIS);
 void NACL_PumpEvents(_THIS);
-void RPI_EventInit(_THIS);
-void RPI_EventQuit(_THIS);
