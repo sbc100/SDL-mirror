@@ -2667,9 +2667,12 @@ case "$host" in
   *-nacl)
       ARCH=nacl
       CheckNativeClient
+      CheckDLOPEN
       CheckDummyAudio
       CheckDummyVideo
       CheckInputEvents
+      CheckOpenGLESX11
+      AC_DEFINE(SDL_FILESYSTEM_DUMMY, 1, [ ])
       EXTRA_CFLAGS="$EXTRA_CFLAGS -std=gnu99"
       # Set up files for the timer library
       if test x$enable_timers = xyes; then

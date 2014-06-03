@@ -23,8 +23,10 @@
 #if SDL_VIDEO_DRIVER_NACL
 
 #include "../SDL_sysvideo.h"
+extern "C" {
 #include "../../events/SDL_keyboard_c.h"
 #include "../../events/SDL_mouse_c.h"
+}
 
 #include "SDL_naclvideo.h"
 #include "SDL_naclwindow.h"
@@ -82,7 +84,6 @@ void
 NACL_DestroyWindow(_THIS, SDL_Window * window)
 {
     fprintf(stderr, "NACL_DestroyWindow\n");
-    SDL_PrivateVideoData *data;
 
     if (window == NACL_Window) {
         NACL_Window = NULL;
