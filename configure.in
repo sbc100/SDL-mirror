@@ -106,6 +106,7 @@ esac
 # built with it to be compiled for a particular architecture.
 #AX_GCC_ARCHFLAG([no], [BASE_CFLAGS="$BASE_CFLAGS $ax_cv_gcc_archflag]")
 BUILD_CFLAGS="$CFLAGS $CPPFLAGS -DUSING_GENERATED_CONFIG_H"
+BUILD_CXXFLAGS="$CXXFLAGS $CPPFLAGS -DUSING_GENERATED_CONFIG_H"
 # The default optimization for SDL is -O3 (Bug #31)
 if test "x$orig_CFLAGS" = x; then
     BUILD_CFLAGS=`echo $BUILD_CFLAGS | sed 's/-O2/-O3/'`
@@ -126,6 +127,7 @@ SDL_CFLAGS="$BASE_CFLAGS"
 SDL_LIBS="-lSDL2 $BASE_LDFLAGS"
 CPPFLAGS="$CPPFLAGS $EXTRA_CFLAGS"
 CFLAGS="$CFLAGS $EXTRA_CFLAGS"
+CXXFLAGS="$CXXFLAGS $EXTRA_CFLAGS"
 LDFLAGS="$LDFLAGS $EXTRA_LDFLAGS"
 
 dnl set this to use on systems that use lib64 instead of lib
@@ -2673,7 +2675,7 @@ case "$host" in
       CheckInputEvents
       CheckOpenGLESX11
       AC_DEFINE(SDL_FILESYSTEM_DUMMY, 1, [ ])
-      EXTRA_CFLAGS="$EXTRA_CFLAGS -std=gnu99"
+      CFLAGS="$CFLAGS -std=gnu99"
       # Set up files for the timer library
       if test x$enable_timers = xyes; then
 	  AC_DEFINE(SDL_TIMER_UNIX)
@@ -3220,7 +3222,14 @@ SDLTEST_SOURCES="$srcdir/src/test/*.c"
 
 OBJECTS=`echo $SOURCES`
 DEPENDS=`echo $SOURCES | tr ' ' '\n'`
-for EXT in asm cc m c S; do
+
+EXT=cc
+OBJECTS=`echo "$OBJECTS" | sed 's,[[^ ]]*/\([[^ ]]*\)\.'$EXT',$(objects)/\1.lo,g'`
+DEPENDS=`echo "$DEPENDS" | sed "s,^\\([[^ ]]*\\)/\\([[^ ]]*\\)\\.$EXT\\$,\\\\
+\\$(objects)/\\2.lo: \\1/\\2.$EXT\\\\
+	\\$(LIBTOOL) --tag=CXX --mode=compile \\$(CXX) \\$(CXXFLAGS) \\$(EXTRA_CFLAGS) $DEPENDENCY_TRACKING_OPTIONS -c \\$< -o \\$@,g"`
+
+for EXT in asm m c S; do
     OBJECTS=`echo "$OBJECTS" | sed 's,[[^ ]]*/\([[^ ]]*\)\.'$EXT',$(objects)/\1.lo,g'`
     DEPENDS=`echo "$DEPENDS" | sed "s,^\\([[^ ]]*\\)/\\([[^ ]]*\\)\\.$EXT\\$,\\\\
 \\$(objects)/\\2.lo: \\1/\\2.$EXT\\\\
@@ -3295,6 +3304,7 @@ AC_SUBST(VERSION_OBJECTS)
 AC_SUBST(SDLMAIN_OBJECTS)
 AC_SUBST(SDLTEST_OBJECTS)
 AC_SUBST(BUILD_CFLAGS)
+AC_SUBST(BUILD_CXXFLAGS)
 AC_SUBST(EXTRA_CFLAGS)
 AC_SUBST(BUILD_LDFLAGS)
 AC_SUBST(EXTRA_LDFLAGS)
