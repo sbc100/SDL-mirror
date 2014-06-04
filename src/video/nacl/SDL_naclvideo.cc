@@ -46,8 +46,6 @@ int g_nacl_video_width = 0; //FIXME: where I set and use this?
 int g_nacl_video_height = 0;
 Uint32 g_nacl_screen_format = SDL_PIXELFORMAT_UNKNOWN;
 
-static int kNaClFlushDelayMs = 20;
-
 #include "SDL_nacl.h"
 
 extern "C" {
@@ -157,7 +155,7 @@ fprintf(stderr, "NACL_CreateDevice\n");
 
   /* Initialize all variables that we clean on shutdown */
   device = (SDL_VideoDevice *)SDL_malloc(sizeof(SDL_VideoDevice));
-  struct SDL_PrivateVideoData * dd;
+  struct SDL_PrivateVideoData * dd = NULL;
   if (device) {
     SDL_memset(device, 0, (sizeof *device)); // FIXME: why *device?
     dd = (struct SDL_PrivateVideoData *)SDL_malloc((sizeof(struct SDL_PrivateVideoData)));

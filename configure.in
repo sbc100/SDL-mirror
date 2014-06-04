@@ -102,7 +102,7 @@ case "$host" in
         BASE_CFLAGS="$BASE_CFLAGS -I/usr/include/mingw"
         ;;
     *-nacl)
-        CFLAGS="$CFLAGS -std=gnu99"
+        CFLAGS="$CFLAGS -std=gnu99 -D_GNU_SOURCE -fno-strict-aliasing -Werror"
         ;;
 esac
 # Uncomment the following line if you want to force SDL and applications
