@@ -101,6 +101,9 @@ case "$host" in
         fi
         BASE_CFLAGS="$BASE_CFLAGS -I/usr/include/mingw"
         ;;
+    *-nacl)
+        CFLAGS="$CFLAGS -std=gnu99"
+        ;;
 esac
 # Uncomment the following line if you want to force SDL and applications
 # built with it to be compiled for a particular architecture.
@@ -2675,7 +2678,6 @@ case "$host" in
       CheckInputEvents
       CheckOpenGLESX11
       AC_DEFINE(SDL_FILESYSTEM_DUMMY, 1, [ ])
-      CFLAGS="$CFLAGS -std=gnu99"
       # Set up files for the timer library
       if test x$enable_timers = xyes; then
 	  AC_DEFINE(SDL_TIMER_UNIX)
