@@ -137,10 +137,10 @@ static void ProcessArgs() {
 
       const char* q, *p = g_argv[i];
       while (*p) {
-        while (*p && isspace(*p)) ++p;
+        while (*p && isspace((unsigned char)*p)) ++p;
         if (!*p) break;
         q = p;
-        while (*p && !isspace(*p)) ++p;
+        while (*p && !isspace((unsigned char)*p)) ++p;
 
         n = sizeof(buf) - 1;
         if (p - q < n) n = p - q;
@@ -186,10 +186,10 @@ static void ProcessArgs() {
 
       const char* q, *p = g_argv[i];
       while (*p) {
-        while (*p && isspace(*p)) ++p;
+        while (*p && isspace((unsigned char)*p)) ++p;
         if (!*p) break;
         q = p;
-        while (*p && !isspace(*p)) ++p;
+        while (*p && !isspace((unsigned char)*p)) ++p;
 
         n = sizeof(buf) - 1;
         if (p - q < n) n = p - q;

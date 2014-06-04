@@ -83,18 +83,18 @@ static struct
 } SDL_EventQ = { NULL, SDL_TRUE };
 
 
+#if !SDL_JOYSTICK_DISABLED
 static SDL_INLINE SDL_bool
 SDL_ShouldPollJoystick()
 {
-#if !SDL_JOYSTICK_DISABLED
     if ((!SDL_disabled_events[SDL_JOYAXISMOTION >> 8] ||
          SDL_JoystickEventState(SDL_QUERY)) &&
         SDL_PrivateJoystickNeedsPolling()) {
         return SDL_TRUE;
     }
-#endif
     return SDL_FALSE;
 }
+#endif
 
 /* Public functions */
 
