@@ -40,47 +40,6 @@ static Uint8 translateButton(int32_t button) {
   }
 }
 
-// Translate ASCII code to browser keycode
-static uint8_t translateAscii(uint8_t ascii) {
-  if ('A' <= ascii && ascii <= 'Z') {
-    return ascii;
-  } else if ('a' <= ascii && ascii <= 'z') {
-    return toupper(ascii);
-  } else if ('0' <= ascii && ascii <= '9') {
-    return ascii;
-  } else if (' ' == ascii || '\r' == ascii || '\t' == ascii ||
-             '\x1b' == ascii || '\b' == ascii) {
-    return ascii;
-  } else {
-    switch (ascii) {
-      case '!': return '1';
-      case '@': return '2';
-      case '#': return '3';
-      case '$': return '4';
-      case '%': return '5';
-      case '^': return '6';
-      case '&': return '7';
-      case '*': return '8';
-      case '(': return '9';
-      case ')': return '0';
-      case ';': case ':': return 186;
-      case '=': case '+': return 187;
-      case ',': case '<': return 188;
-      case '-': case '_': return 189;
-      case '.': case '>': return 190;
-      case '/': case '?': return 191;
-      case '`': case '~': return 192;
-      case '[': case '{': return 219;
-      case '\\': case '|': return 220;
-      case ']': case '}': return 221;
-      case '\'': case '"': return 222;
-      default:
-        break;
-    }
-  }
-  return 0;
-}
-
 // Translate browser keycode to SDL_Keycode
 static SDL_Keycode translateKey(uint32_t code) {
   if (code >= 'A' && code <= 'Z')
