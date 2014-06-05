@@ -56,7 +56,7 @@ void SDLTest_Assert(int assertCondition, SDL_PRINTF_FORMAT_STRING const char *as
     va_end(list);
 
     /* Log, then assert and break on failure */
-    SDL_assert((SDLTest_AssertCheck(assertCondition, logMessage)));
+    SDL_assert((SDLTest_AssertCheck(assertCondition, "%s", logMessage)));
 }
 
 /*
