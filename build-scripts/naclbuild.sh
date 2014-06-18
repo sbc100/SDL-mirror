@@ -1,4 +1,7 @@
 #!/bin/bash
+
+set -o errexit
+
 if [ -z "$1" ] && [ -z "$NACL_SDK_ROOT" ]; then
     echo "Usage: ./naclbuild ~/nacl/pepper_35"
     echo "This will build SDL for Native Client, and testgles2.c as a demo"
@@ -18,9 +21,6 @@ if [ -n "$2" ]; then
 fi
 
 echo "Using SDK at $NACL_SDK_ROOT"
-
-export NACL_SDK_ROOT="$NACL_SDK_ROOT"
-export CFLAGS="$CFLAGS -I$NACL_SDK_ROOT/include -I$NACL_SDK_ROOT/include/pnacl"
 
 NCPUS="1"
 case "$OSTYPE" in
@@ -44,20 +44,21 @@ mkdir -p $BUILDPATH
 mkdir -p $TESTBUILDPATH
 
 if [ -z "$CC" ]; then
-    export CC="$NACL_SDK_ROOT/toolchain/linux_pnacl/bin/pnacl-clang"
+    CC="$NACL_SDK_ROOT/toolchain/linux_pnacl/bin/pnacl-clang"
+    CPPFLAGS="-I$NACL_SDK_ROOT/include -I$NACL_SDK_ROOT/include/pnacl"
 fi
 if [ -z "$AR" ]; then
-    export AR="$NACL_SDK_ROOT/toolchain/linux_pnacl/bin/pnacl-ar"
+    AR="$NACL_SDK_ROOT/toolchain/linux_pnacl/bin/pnacl-ar"
 fi
 if [ -z "$LD" ]; then
-    export LD="$NACL_SDK_ROOT/toolchain/linux_pnacl/bin/pnacl-ar"
+    LD="$NACL_SDK_ROOT/toolchain/linux_pnacl/bin/pnacl-ar"
 fi
 if [ -z "$RANLIB" ]; then
-    export RANLIB="$NACL_SDK_ROOT/toolchain/linux_pnacl/bin/pnacl-ranlib"
+    RANLIB="$NACL_SDK_ROOT/toolchain/linux_pnacl/bin/pnacl-ranlib"
 fi
 
 if [ -z "$SOURCES" ]; then
-    export SOURCES="$SDLPATH/test/testgles2.c"
+    SOURCES="$SDLPATH/test/testgles2.c"
 fi
 
 if [ ! -f "$CC" ]; then
@@ -65,12 +66,23 @@ if [ ! -f "$CC" ]; then
     exit 1
 fi
 
-
-
+export NACL_SDK_ROOT
+export CC
+export AR
+export LD
+export RANLIB
+export CPPFLAGS
 
 cd $BUILDPATH
-$SDLPATH/configure --host=pnacl --prefix $TESTBUILDPATH
-make -j$NCPUS CFLAGS="$CFLAGS -I./include"
+CONFIGURE="$SDLPATH/configure --host=pnacl --prefix $TESTBUILDPATH"
+echo ""
+echo "Running configure: $CONFIGURE"
+echo ""
+$CONFIGURE
+echo ""
+echo "Running make:"
+echo ""
+make -j$NCPUS
 make install
 
 if [ ! -f "$SDL2_STATIC" ]; then
@@ -86,20 +98,14 @@ cp -f $SDLPATH/test/*.wav $TESTBUILDPATH
 cp -f $SDL2_STATIC $TESTBUILDPATH
 
 # Copy user sources
-_SOURCES=($SOURCES)
-for src in "${_SOURCES[@]}"
-do
-    cp $src $TESTBUILDPATH
-done
-export SOURCES="$SOURCES"
+cp $SOURCES $TESTBUILDPATH
 
 cd $TESTBUILDPATH
-make -j$NCPUS CONFIG="Release" CFLAGS="$CFLAGS -I$TESTBUILDPATH/include/SDL2 -I$SDLPATH/include"
-make -j$NCPUS CONFIG="Debug" CFLAGS="$CFLAGS -I$TESTBUILDPATH/include/SDL2 -I$SDLPATH/include"
+export SOURCES
+make -j$NCPUS CONFIG="Release" CFLAGS="-I$TESTBUILDPATH/include/SDL2 -I$SDLPATH/include"
+make -j$NCPUS CONFIG="Debug" CFLAGS="-I$TESTBUILDPATH/include/SDL2 -I$SDLPATH/include"
 
 echo
 echo "Run the test with: "
-echo "cd $TESTBUILDPATH;python -m SimpleHTTPServer"
+echo "cd $TESTBUILDPATH && python -m SimpleHTTPServer"
 echo "Then visit http://localhost:8000 with Chrome"
-
-cd $CURDIR
