@@ -1356,6 +1356,7 @@ CheckNativeClient()
         AC_DEFINE(SDL_VIDEO_RENDER_OGL_ES2, 1, [ ])
 
         SDL_LIBS="-lppapi_simple -lppapi_gles2 $SDL_LIBS"
+        EXTRA_LDFLAGS="-lppapi_simple -lppapi_gles2 $EXTRA_LDFLAGS"
 
         SDLMAIN_SOURCES="$srcdir/src/main/nacl/*.c"
         SOURCES="$SOURCES $srcdir/src/audio/nacl/*.c"
