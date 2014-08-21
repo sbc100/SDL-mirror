@@ -76,6 +76,9 @@ illegal_instruction(int sig)
 static SDL_INLINE int
 CPU_haveCPUID(void)
 {
+#if defined __native_client__
+    return 1;
+#else
     int has_CPUID = 0;
 /* *INDENT-OFF* */
 #if defined(__GNUC__) && defined(i386)
@@ -166,6 +169,7 @@ done:
 #endif
 /* *INDENT-ON* */
     return has_CPUID;
+#endif
 }
 
 #if defined(__GNUC__) && defined(i386)
