@@ -65,6 +65,19 @@ case "$host" in
         MATHLIB=""
         SYS_GL_LIBS="-lGLES_CM"
         ;;
+    *-*-nacl*)
+        case "$CC" in
+            *pnacl*)
+                EXE=".pexe"
+                ;;
+            *)
+                EXE=".nexe"
+                ;;
+        esac
+        CFLAGS="$CFLAGS -std=gnu99"
+        MATHLIB="-lm"
+        SYS_GL_LIBS=""
+        ;;
     *)
         dnl Oh well, call it Unix...
         ISUNIX="true"
