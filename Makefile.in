@@ -45,6 +45,15 @@ DIST = acinclude autogen.sh Borland.html Borland.zip BUGS build-scripts configur
 
 HDRS = SDL.h SDL_active.h SDL_audio.h SDL_byteorder.h SDL_cdrom.h SDL_cpuinfo.h SDL_endian.h SDL_error.h SDL_events.h SDL_getenv.h SDL_joystick.h SDL_keyboard.h SDL_keysym.h SDL_loadso.h SDL_main.h SDL_mouse.h SDL_mutex.h SDL_name.h SDL_nacl.h SDL_opengl.h SDL_platform.h SDL_quit.h SDL_rwops.h SDL_stdinc.h SDL_syswm.h SDL_thread.h SDL_timer.h SDL_types.h SDL_version.h SDL_video.h begin_code.h close_code.h
 
+ifneq ($V,1)
+RUN_CMD_AR     = @echo "  AR    " $@;
+RUN_CMD_CC     = @echo "  CC    " $@;
+RUN_CMD_CXX    = @echo "  CXX   " $@;
+RUN_CMD_LTLINK = @echo "  LTLINK" $@;
+RUN_CMD_RANLIB = @echo "  RANLIB" $@;
+LIBTOOL += --quiet
+endif
+
 LT_AGE      = @LT_AGE@
 LT_CURRENT  = @LT_CURRENT@
 LT_RELEASE  = @LT_RELEASE@
@@ -72,10 +81,10 @@ depend:
 include $(depend)
 
 $(objects)/$(TARGET): $(OBJECTS)
-	$(LIBTOOL) --mode=link $(CC) -o $@ $^ $(LDFLAGS) $(EXTRA_LDFLAGS) $(LT_LDFLAGS)
+	$(RUN_CMD_LTLINK)$(LIBTOOL) --mode=link $(CC) -o $@ $^ $(LDFLAGS) $(EXTRA_LDFLAGS) $(LT_LDFLAGS)
 
 $(objects)/$(SDLMAIN_TARGET): $(SDLMAIN_OBJECTS)
-	$(LIBTOOL) --mode=link $(CC) -o $@ $^ $(LDFLAGS) $(EXTRA_LDFLAGS) $(LT_LDFLAGS) $(SDLMAIN_LDFLAGS)
+	$(RUN_CMD_LTLINK)$(LIBTOOL) --mode=link $(CC) -o $@ $^ $(LDFLAGS) $(EXTRA_LDFLAGS) $(LT_LDFLAGS) $(SDLMAIN_LDFLAGS)
 
 install: all install-bin install-hdrs install-lib install-data install-man
 install-bin:

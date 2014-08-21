@@ -51,31 +51,31 @@ do  echo "Generating dependencies for $src"
     case $ext in
         c) cat >>${output}.new <<__EOF__
 
-	\$(LIBTOOL) --mode=compile \$(CC) \$(CFLAGS) \$(EXTRA_CFLAGS) -c $src  -o \$@
+	\$(RUN_CMD_CC)\$(LIBTOOL) --mode=compile \$(CC) \$(CFLAGS) \$(EXTRA_CFLAGS) -c $src  -o \$@
 
 __EOF__
         ;;
         cc) cat >>${output}.new <<__EOF__
 
-	\$(LIBTOOL) --mode=compile \$(CC) \$(CFLAGS) \$(EXTRA_CFLAGS) -c $src  -o \$@
+	\$(RUN_CMD_CC)\$(LIBTOOL) --mode=compile \$(CC) \$(CFLAGS) \$(EXTRA_CFLAGS) -c $src  -o \$@
 
 __EOF__
         ;;
         m) cat >>${output}.new <<__EOF__
 
-	\$(LIBTOOL) --mode=compile \$(CC) \$(CFLAGS) \$(EXTRA_CFLAGS) -c $src  -o \$@
+	\$(RUN_CMD_CC)\$(LIBTOOL) --mode=compile \$(CC) \$(CFLAGS) \$(EXTRA_CFLAGS) -c $src  -o \$@
 
 __EOF__
         ;;
         asm) cat >>${output}.new <<__EOF__
 
-	\$(LIBTOOL) --tag=CC --mode=compile \$(auxdir)/strip_fPIC.sh \$(NASM) -I\$(srcdir)/src/hermes/ $src -o \$@
+	\$(RUN_CMD_CC)\$(LIBTOOL) --tag=CC --mode=compile \$(auxdir)/strip_fPIC.sh \$(NASM) -I\$(srcdir)/src/hermes/ $src -o \$@
 
 __EOF__
         ;;
         S) cat >>${output}.new <<__EOF__
 
-	\$(LIBTOOL)  --mode=compile \$(CC) \$(CFLAGS) \$(EXTRA_CFLAGS) -c $src  -o \$@
+	\$(RUN_CMD_CC)\$(LIBTOOL)  --mode=compile \$(CC) \$(CFLAGS) \$(EXTRA_CFLAGS) -c $src  -o \$@
 
 __EOF__
         ;;
