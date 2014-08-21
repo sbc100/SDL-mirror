@@ -39,7 +39,11 @@ static void SDL_Parachute(int sig)
 {
 	signal(sig, SIG_DFL);
 	SDL_Quit();
+#ifdef __native_client__
+	exit(sig);
+#else
 	raise(sig);
+#endif
 }
 
 static int SDL_fatal_signals[] = {

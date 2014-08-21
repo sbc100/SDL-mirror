@@ -33,7 +33,7 @@
 #endif
 #include <windows.h>
 #endif
-#ifndef NO_SDL_GLEXT
+#if !defined(NO_SDL_GLEXT) && !defined(__native_client__)
 #define __glext_h_  /* Don't let gl.h include glext.h */
 #endif
 #if defined(__MACOSX__)
@@ -42,6 +42,10 @@
 #elif defined(__MACOS__)
 #include <gl.h>		/* Header File For The OpenGL Library */
 #include <glu.h>	/* Header File For The GLU Library */
+#elif defined(__native_client__)
+#include <GL/Regal.h>
+#define APIENTRY
+#define APIENTRYP APIENTRY *
 #else
 #include <GL/gl.h>	/* Header File For The OpenGL Library */
 #include <GL/glu.h>	/* Header File For The GLU Library */

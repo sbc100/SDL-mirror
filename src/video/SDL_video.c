@@ -33,6 +33,9 @@
 
 /* Available video drivers */
 static VideoBootStrap *bootstrap[] = {
+#if SDL_VIDEO_DRIVER_NACL
+	&NACL_bootstrap,
+#endif
 #if SDL_VIDEO_DRIVER_QUARTZ
 	&QZ_bootstrap,
 #endif
@@ -771,6 +774,8 @@ SDL_Surface * SDL_SetVideoMode (int width, int height, int bpp, Uint32 flags)
 #if defined(__QNXNTO__) && (_NTO_VERSION < 630)
 #define __SDL_NOGETPROCADDR__
 #elif defined(__MINT__)
+#define __SDL_NOGETPROCADDR__
+#elif defined(__native_client__)
 #define __SDL_NOGETPROCADDR__
 #endif
 #ifdef __SDL_NOGETPROCADDR__

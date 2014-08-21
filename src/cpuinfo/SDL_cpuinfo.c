@@ -53,6 +53,8 @@ static void illegal_instruction(int sig)
 }
 #endif /* HAVE_SETJMP */
 
+
+#if SDL_ASSEMBLY_ROUTINES
 static __inline__ int CPU_haveCPUID(void)
 {
 	int has_CPUID = 0;
@@ -299,6 +301,15 @@ done:
 #endif
 	return features;
 }
+
+#else // SDL_ASSEMBLY_ROUTINES
+
+static __inline__ int CPU_haveCPUID(void) { return 0; }
+static __inline__ int CPU_getCPUIDFeaturesExt(void) { return 0; }
+static __inline__ int CPU_getCPUIDFeatures(void) { return 0; }
+
+#endif // SDL_ASSEMBLY_ROUTINES
+
 
 static __inline__ int CPU_haveRDTSC(void)
 {

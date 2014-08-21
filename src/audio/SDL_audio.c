@@ -36,6 +36,9 @@
 
 /* Available audio drivers */
 static AudioBootStrap *bootstrap[] = {
+#if SDL_AUDIO_DRIVER_NACL
+	&NACLAUD_bootstrap,
+#endif
 #if SDL_AUDIO_DRIVER_PULSE
 	&PULSE_bootstrap,
 #endif
