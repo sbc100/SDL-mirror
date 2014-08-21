@@ -295,7 +295,7 @@ void SDL_NACL_SetPageVisible(int is_visible) {
 
 void NACL_PumpEvents(_THIS) {
   SDL_Event* event;
-  while (event = event_queue.PopEvent()) {
+  while ((event = event_queue.PopEvent())) {
     if (event->type == SDL_MOUSEBUTTONDOWN) {
       SDL_PrivateMouseButton(SDL_PRESSED, event->button.button,
                              event->button.x, event->button.y);

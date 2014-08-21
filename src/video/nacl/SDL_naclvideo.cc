@@ -40,8 +40,6 @@ const PPB_Var_1_1 *g_nacl_var_interface;
 static int g_nacl_video_width;
 static int g_nacl_video_height;
 
-static int kNaClFlushDelayMs = 20;
-
 #include "SDL_nacl.h"
 
 extern "C" {
@@ -97,8 +95,6 @@ void SDL_NACL_SetInstance(PP_Instance instance, PPB_GetInterface get_interface,
     SDL_PrivateResize(width, height);
   }
 }
-
-static void flush(void *data, int32_t unused);
 
 /* Initialization/Query functions */
 static int NACL_VideoInit(_THIS, SDL_PixelFormat *vformat);

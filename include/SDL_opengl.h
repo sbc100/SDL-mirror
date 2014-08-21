@@ -43,6 +43,7 @@
 #include <gl.h>		/* Header File For The OpenGL Library */
 #include <glu.h>	/* Header File For The GLU Library */
 #elif defined(__native_client__)
+#define REGAL_NO_ENUM_GL_SGIX_VERTEX_PRECLIP_HINT
 #include <GL/Regal.h>
 #define APIENTRY
 #define APIENTRYP APIENTRY *

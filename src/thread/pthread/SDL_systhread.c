@@ -28,11 +28,13 @@
 #include "../SDL_thread_c.h"
 #include "../SDL_systhread.h"
 
+#ifndef __NACL__
 /* List of signals to mask in the subthreads */
 static int sig_list[] = {
 	SIGHUP, SIGINT, SIGQUIT, SIGPIPE, SIGALRM, SIGTERM, SIGCHLD, SIGWINCH,
 	SIGVTALRM, SIGPROF, 0
 };
+#endif
 
 #ifdef __RISCOS__
 /* RISC OS needs to know the main thread for
@@ -78,11 +80,11 @@ int SDL_SYS_CreateThread(SDL_Thread *thread, void *args)
 
 void SDL_SYS_SetupThread(void)
 {
+	// NativeClient does not yet support signals.
+#ifndef __NACL__
 	int i;
 	sigset_t mask;
 
-	// NativeClient does not yet support signals.
-#ifndef __NACL__
 	/* Mask asynchronous signals for this thread */
 	sigemptyset(&mask);
 	for ( i=0; sig_list[i]; ++i ) {

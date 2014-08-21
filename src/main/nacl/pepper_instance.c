@@ -10,6 +10,7 @@
 #include <pthread.h>
 #include <stdio.h>
 #include <string.h>
+#include <sys/ioctl.h>
 #include <sys/mount.h>
 #include <unistd.h>
 
@@ -188,10 +189,10 @@ static void ProcessArgs() {
 
       const char* q, *p = g_argv[i];
       while (*p) {
-        while (*p && isspace(*p)) ++p;
+        while (*p && isspace((unsigned char)*p)) ++p;
         if (!*p) break;
         q = p;
-        while (*p && !isspace(*p)) ++p;
+        while (*p && !isspace((unsigned char)*p)) ++p;
 
         n = sizeof(buf) - 1;
         if (p - q < n) n = p - q;
@@ -243,10 +244,10 @@ static void ProcessArgs() {
 
       const char* q, *p = g_argv[i];
       while (*p) {
-        while (*p && isspace(*p)) ++p;
+        while (*p && isspace((unsigned char)*p)) ++p;
         if (!*p) break;
         q = p;
-        while (*p && !isspace(*p)) ++p;
+        while (*p && !isspace((unsigned char)*p)) ++p;
 
         n = sizeof(buf) - 1;
         if (p - q < n) n = p - q;
@@ -310,7 +311,7 @@ PPP_InitializeModule(PP_Module module, PPB_GetInterface get_browser) {
   g_input_event_interface =
       (struct PPB_InputEvent_1_0*)get_browser(PPB_INPUT_EVENT_INTERFACE_1_0);
   g_messaging_interface =
-      (struct PPB_InputEvent_1_0*)get_browser(PPB_MESSAGING_INTERFACE_1_0);
+      (struct PPB_Messaging_1_0*)get_browser(PPB_MESSAGING_INTERFACE_1_0);
   g_var_interface = (struct PPB_Var_1_1*)get_browser(PPB_VAR_INTERFACE_1_1);
   g_view_interface = (struct PPB_View_1_1*)get_browser(PPB_VIEW_INTERFACE_1_1);
   return PP_OK;
