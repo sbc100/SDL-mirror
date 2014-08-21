@@ -42,6 +42,12 @@ static int g_nacl_video_height;
 
 #include "SDL_nacl.h"
 
+#ifndef NDEBUG
+#define SDL_TRACE(msg, ...) fprintf(stderr, "SDL: " msg, ##__VA_ARGS__)
+#else
+#define SDL_TRACE(...)
+#endif
+
 extern "C" {
 
 #ifdef SDL_VIDEO_OPENGL_REGAL
@@ -188,8 +194,7 @@ VideoBootStrap NACL_bootstrap = {
 };
 
 int NACL_VideoInit(_THIS, SDL_PixelFormat *vformat) {
-  fprintf(stderr,
-          "SDL: Congratulations you are using the SDL nacl video driver!\n");
+  SDL_TRACE("Congratulations you are using the SDL nacl video driver!\n");
 
   /* Determine the screen depth (use default 8-bit depth) */
   /* we change this during the SDL_SetVideoMode implementation... */
@@ -211,9 +216,8 @@ SDL_Rect **NACL_ListModes(_THIS, SDL_PixelFormat *format, Uint32 flags) {
 SDL_Surface *NACL_SetVideoMode(_THIS, SDL_Surface *current, int width,
                                int height, int bpp, Uint32 flags) {
 
-  fprintf(stderr, "SDL: setvideomode %dx%d bpp=%d opengl=%d flags=%u\n", width,
-          height, bpp, flags & SDL_OPENGL ? 1 : 0, flags);
-  fflush(stderr);
+  SDL_TRACE("setvideomode %dx%d bpp=%d opengl=%d flags=%u\n", width,
+            height, bpp, flags & SDL_OPENGL ? 1 : 0, flags);
 
   if (width > _this->hidden->ow || height > _this->hidden->oh) return NULL;
   _this->hidden->bpp = bpp = 32;  // Let SDL handle pixel format conversion.
@@ -246,7 +250,7 @@ SDL_Surface *NACL_SetVideoMode(_THIS, SDL_Surface *current, int width,
 
     if (!g_nacl_instance_interface->BindGraphics(g_nacl_pp_instance,
                                                  _this->hidden->context3d)) {
-      fprintf(stderr, "***** Couldn't bind the graphic3d context *****\n");
+      SDL_SetError("Couldn't bind the graphic3d context");
       return NULL;
     }
   } else {
@@ -257,7 +261,7 @@ SDL_Surface *NACL_SetVideoMode(_THIS, SDL_Surface *current, int width,
 
     if (!g_nacl_instance_interface->BindGraphics(g_nacl_pp_instance,
                                                  _this->hidden->context2d)) {
-      fprintf(stderr, "***** Couldn't bind the graphic2d context *****\n");
+      SDL_SetError("Couldn't bind the graphic2d context");
       return NULL;
     }
 
@@ -362,7 +366,7 @@ void NACL_VideoQuit(_THIS) {
 #ifdef SDL_VIDEO_OPENGL_REGAL
 static void regalLogCallback(GLenum stream, GLsizei length,
                              const GLchar *message, GLvoid *context) {
-  fprintf(stderr, "regal: %s\n", message);
+  SDL_TRACE("regal: %s\n", message);
 }
 
 static int NACL_GL_GetAttribute(_THIS, SDL_GLattr attrib, int *value) {
@@ -420,8 +424,7 @@ static int NACL_GL_GetAttribute(_THIS, SDL_GLattr attrib, int *value) {
                                                        attribs);
   if (retval != PP_OK) {
     // TODO(sbc): GetAttribs seems to always return PP_ERROR_FAILED(-2).
-    // fprintf(stderr, "SDL: GetAttribs failed %#x -> %d\n", nacl_attrib,
-    // retval);
+    // SDL_TRACE("GetAttribs failed %#x -> %d\n", nacl_attrib, retval);
     SDL_SetError("Error getting OpenGL attribute (%d) from NaCl: %d", attrib,
                  retval);
     return -1;
@@ -437,7 +440,7 @@ static int NACL_GL_MakeCurrent(_THIS) {
     SDL_SetError("GL_MakeCurrent called without an OpenGL video mode set");
     return -1;
   }
-  fprintf(stderr, "SDL: making GL context current\n");
+  SDL_TRACE("SDL: making GL context current\n");
   glSetCurrentContextPPAPI(_this->hidden->context3d);
 
   RegalMakeCurrent(_this->hidden->context3d,
@@ -449,8 +452,7 @@ static int NACL_GL_MakeCurrent(_THIS) {
 static void NACL_GL_SwapBuffers(_THIS) {
   if (!_this->hidden->context3d) {
     assert(_this->hidden->context3d);
-    fprintf(stderr,
-            "SDL: GL_SwapBuffers called without an OpenGL video mode set\n");
+    SDL_TRACE("GL_SwapBuffers called without an OpenGL video mode set\n");
     return;
   }
   g_nacl_graphics3d_interface->SwapBuffers(_this->hidden->context3d,
