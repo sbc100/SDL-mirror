@@ -70,8 +70,6 @@ nacl_main(int argc, char *argv[])
      * apps can override this by unmounting / 
      * and remounting with the desired configuration
      */
-    nacl_io_init_ppapi(PSGetInstanceId(), PSGetInterface);
-    
     umount("/");
     mount(
         "",  /* source */
