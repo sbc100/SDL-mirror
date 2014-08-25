@@ -17,7 +17,9 @@
 #include "SDL_test_common.h"
 
 #if defined(__IPHONEOS__) || defined(__ANDROID__) || defined(__NACL__)
+#ifndef HAVE_OPENGLES2
 #define HAVE_OPENGLES2
+#endif
 #endif
 
 #ifdef HAVE_OPENGLES2
@@ -499,7 +501,7 @@ main(int argc, char *argv[])
 
     /* Important: call this *after* creating the context */
     if (LoadContext(&ctx) < 0) {
-        SDL_Log("Could not load GLES2 functions\n");
+        SDL_Log("%s\n", SDL_GetError());
         quit(2);
         return 0;
     }
