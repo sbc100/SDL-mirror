@@ -37,7 +37,11 @@
 
 #include "SDL_config.h"
 
-#ifndef __IPHONEOS__  /* No OpenGL on iOS. */
+#if defined(__IPHONEOS__) || defined(__NACL__) /* No OpenGL on iOS. */
+
+#error "No OpenGL support on this platform"
+
+#else
 
 /*
  * Mesa 3-D graphics library
