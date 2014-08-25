@@ -921,7 +921,7 @@ AC_HELP_STRING([--enable-naclvideo], [enable the nacl video driver [[default=yes
         AC_DEFINE(SDL_VIDEO_DRIVER_NACL)
         SOURCES="$SOURCES $srcdir/src/video/nacl/*.cc"
         EXTRA_LDFLAGS="-lnacl_io -l${NACL_CPP_LIB:-stdc++} $EXTRA_LDFLAGS"
-        SDL_LIBS="$SDL_LIBS -lppapi -lSDLmain -ltar"
+        SDL_LIBS="-Wl,-uPPP_InitializeModule -lSDLmain $SDL_LIBS -lppapi -ltar"
     fi
 
     AC_ARG_ENABLE(naclaudio,
