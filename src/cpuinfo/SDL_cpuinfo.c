@@ -231,6 +231,7 @@ CPU_getCPUIDFeatures(void)
     return features;
 }
 
+#ifndef __native_client__
 static SDL_bool
 CPU_OSSavesYMM(void)
 {
@@ -262,6 +263,7 @@ CPU_OSSavesYMM(void)
 #endif
     return ((a & 6) == 6) ? SDL_TRUE : SDL_FALSE;
 }
+#endif
 
 static int
 CPU_haveRDTSC(void)
@@ -389,6 +391,7 @@ CPU_haveSSE42(void)
 static int
 CPU_haveAVX(void)
 {
+#ifndef __native_client__
     if (CPU_haveCPUID() && CPU_OSSavesYMM()) {
         int a, b, c, d;
 
@@ -398,12 +401,14 @@ CPU_haveAVX(void)
             return (c & 0x10000000);
         }
     }
+#endif
     return 0;
 }
 
 static int
 CPU_haveAVX2(void)
 {
+#ifndef __native_client__
     if (CPU_haveCPUID() && CPU_OSSavesYMM()) {
         int a, b, c, d;
 
@@ -413,6 +418,7 @@ CPU_haveAVX2(void)
             return (b & 0x00000020);
         }
     }
+#endif
     return 0;
 }
 
