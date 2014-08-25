@@ -11,6 +11,8 @@ LIBS	= @LIBS@
 TARGETS = \
 	checkkeys$(EXE) \
 	loopwave$(EXE) \
+	loopwavequeue$(EXE) \
+	testatomic$(EXE) \
 	testaudioinfo$(EXE) \
 	testautomation$(EXE) \
 	testdraw2$(EXE) \
@@ -69,6 +71,9 @@ checkkeys$(EXE): $(srcdir)/checkkeys.c
 
 loopwave$(EXE): $(srcdir)/loopwave.c
 	$(CC) -o $@ $^ $(CFLAGS) $(LDFLAGS) $(LIBS)
+
+loopwavequeue$(EXE): $(srcdir)/loopwavequeue.c
+	$(CC) -o $@ $^ $(CFLAGS) $(LIBS)
 
 testresample$(EXE): $(srcdir)/testresample.c
 	$(CC) -o $@ $^ $(CFLAGS) $(LDFLAGS) $(LIBS)

@@ -60,6 +60,7 @@
 #define CPU_HAS_SSE41   0x00000100
 #define CPU_HAS_SSE42   0x00000200
 #define CPU_HAS_AVX     0x00000400
+#define CPU_HAS_AVX2    0x00000800
 
 #if SDL_ALTIVEC_BLITTERS && HAVE_SETJMP && !__MACOSX__ && !__OpenBSD__
 /* This is the brute force way of detecting instruction sets...
@@ -73,7 +74,7 @@ illegal_instruction(int sig)
 }
 #endif /* HAVE_SETJMP */
 
-static SDL_INLINE int
+static int
 CPU_haveCPUID(void)
 {
 #if defined __native_client__
@@ -176,6 +177,7 @@ done:
 #define cpuid(func, a, b, c, d) \
     __asm__ __volatile__ ( \
 "        pushl %%ebx        \n" \
+"        xorl %%ecx,%%ecx   \n" \
 "        cpuid              \n" \
 "        movl %%ebx, %%esi  \n" \
 "        popl %%ebx         \n" : \
@@ -184,6 +186,7 @@ done:
 #define cpuid(func, a, b, c, d) \
     __asm__ __volatile__ ( \
 "        pushq %%rbx        \n" \
+"        xorq %%rcx,%%rcx   \n" \
 "        cpuid              \n" \
 "        movq %%rbx, %%rsi  \n" \
 "        popq %%rbx         \n" : \
@@ -192,6 +195,7 @@ done:
 #define cpuid(func, a, b, c, d) \
     __asm { \
         __asm mov eax, func \
+        __asm xor ecx, ecx \
         __asm cpuid \
         __asm mov a, eax \
         __asm mov b, ebx \
@@ -213,7 +217,7 @@ done:
     a = b = c = d = 0
 #endif
 
-static SDL_INLINE int
+static int
 CPU_getCPUIDFeatures(void)
 {
     int features = 0;
@@ -227,7 +231,39 @@ CPU_getCPUIDFeatures(void)
     return features;
 }
 
-static SDL_INLINE int
+static SDL_bool
+CPU_OSSavesYMM(void)
+{
+    int a, b, c, d;
+
+    /* Check to make sure we can call xgetbv */
+    cpuid(0, a, b, c, d);
+    if (a < 1) {
+        return SDL_FALSE;
+    }
+    cpuid(1, a, b, c, d);
+    if (!(c & 0x08000000)) {
+        return SDL_FALSE;
+    }
+
+    /* Call xgetbv to see if YMM register state is saved */
+    a = 0;
+#if defined(__GNUC__) && (defined(i386) || defined(__x86_64__))
+    asm(".byte 0x0f, 0x01, 0xd0" : "=a" (a) : "c" (0) : "%edx");
+#elif defined(_MSC_VER) && (defined(_M_IX86) || defined(_M_X64)) && (_MSC_FULL_VER >= 160040219) /* VS2010 SP1 */
+    a = (int)_xgetbv(0);
+#elif (defined(_MSC_VER) && defined(_M_IX86)) || defined(__WATCOMC__)
+    __asm
+    {
+        xor ecx, ecx
+        _asm _emit 0x0f _asm _emit 0x01 _asm _emit 0xd0
+        mov a, eax
+    }
+#endif
+    return ((a & 6) == 6) ? SDL_TRUE : SDL_FALSE;
+}
+
+static int
 CPU_haveRDTSC(void)
 {
     if (CPU_haveCPUID()) {
@@ -236,7 +272,7 @@ CPU_haveRDTSC(void)
     return 0;
 }
 
-static SDL_INLINE int
+static int
 CPU_haveAltiVec(void)
 {
     volatile int altivec = 0;
@@ -263,7 +299,7 @@ CPU_haveAltiVec(void)
     return altivec;
 }
 
-static SDL_INLINE int
+static int
 CPU_haveMMX(void)
 {
     if (CPU_haveCPUID()) {
@@ -272,7 +308,7 @@ CPU_haveMMX(void)
     return 0;
 }
 
-static SDL_INLINE int
+static int
 CPU_have3DNow(void)
 {
     if (CPU_haveCPUID()) {
@@ -287,7 +323,7 @@ CPU_have3DNow(void)
     return 0;
 }
 
-static SDL_INLINE int
+static int
 CPU_haveSSE(void)
 {
     if (CPU_haveCPUID()) {
@@ -296,7 +332,7 @@ CPU_haveSSE(void)
     return 0;
 }
 
-static SDL_INLINE int
+static int
 CPU_haveSSE2(void)
 {
     if (CPU_haveCPUID()) {
@@ -305,7 +341,7 @@ CPU_haveSSE2(void)
     return 0;
 }
 
-static SDL_INLINE int
+static int
 CPU_haveSSE3(void)
 {
     if (CPU_haveCPUID()) {
@@ -320,13 +356,13 @@ CPU_haveSSE3(void)
     return 0;
 }
 
-static SDL_INLINE int
+static int
 CPU_haveSSE41(void)
 {
     if (CPU_haveCPUID()) {
         int a, b, c, d;
 
-        cpuid(1, a, b, c, d);
+        cpuid(0, a, b, c, d);
         if (a >= 1) {
             cpuid(1, a, b, c, d);
             return (c & 0x00080000);
@@ -335,13 +371,13 @@ CPU_haveSSE41(void)
     return 0;
 }
 
-static SDL_INLINE int
+static int
 CPU_haveSSE42(void)
 {
     if (CPU_haveCPUID()) {
         int a, b, c, d;
 
-        cpuid(1, a, b, c, d);
+        cpuid(0, a, b, c, d);
         if (a >= 1) {
             cpuid(1, a, b, c, d);
             return (c & 0x00100000);
@@ -350,16 +386,31 @@ CPU_haveSSE42(void)
     return 0;
 }
 
-static SDL_INLINE int
+static int
 CPU_haveAVX(void)
 {
-    if (CPU_haveCPUID()) {
+    if (CPU_haveCPUID() && CPU_OSSavesYMM()) {
         int a, b, c, d;
 
-        cpuid(1, a, b, c, d);
+        cpuid(0, a, b, c, d);
         if (a >= 1) {
             cpuid(1, a, b, c, d);
             return (c & 0x10000000);
+        }
+    }
+    return 0;
+}
+
+static int
+CPU_haveAVX2(void)
+{
+    if (CPU_haveCPUID() && CPU_OSSavesYMM()) {
+        int a, b, c, d;
+
+        cpuid(0, a, b, c, d);
+        if (a >= 7) {
+            cpuid(7, a, b, c, d);
+            return (b & 0x00000020);
         }
     }
     return 0;
@@ -564,6 +615,9 @@ SDL_GetCPUFeatures(void)
         if (CPU_haveAVX()) {
             SDL_CPUFeatures |= CPU_HAS_AVX;
         }
+        if (CPU_haveAVX2()) {
+            SDL_CPUFeatures |= CPU_HAS_AVX2;
+        }
     }
     return SDL_CPUFeatures;
 }
@@ -658,6 +712,15 @@ SDL_HasAVX(void)
     return SDL_FALSE;
 }
 
+SDL_bool
+SDL_HasAVX2(void)
+{
+    if (SDL_GetCPUFeatures() & CPU_HAS_AVX2) {
+        return SDL_TRUE;
+    }
+    return SDL_FALSE;
+}
+
 static int SDL_SystemRAM = 0;
 
 int
@@ -724,6 +787,7 @@ main()
     printf("SSE4.1: %d\n", SDL_HasSSE41());
     printf("SSE4.2: %d\n", SDL_HasSSE42());
     printf("AVX: %d\n", SDL_HasAVX());
+    printf("AVX2: %d\n", SDL_HasAVX2());
     printf("RAM: %d MB\n", SDL_GetSystemRAM());
     return 0;
 }

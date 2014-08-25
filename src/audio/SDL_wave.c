@@ -345,8 +345,8 @@ IMA_ADPCM_decode(Uint8 ** audio_buf, Uint32 * audio_len)
     /* Check to make sure we have enough variables in the state array */
     channels = IMA_ADPCM_state.wavefmt.channels;
     if (channels > SDL_arraysize(IMA_ADPCM_state.state)) {
-        SDL_SetError("IMA ADPCM decoder can only handle %zu channels",
-                     SDL_arraysize(IMA_ADPCM_state.state));
+        SDL_SetError("IMA ADPCM decoder can only handle %u channels",
+                     (unsigned int)SDL_arraysize(IMA_ADPCM_state.state));
         return (-1);
     }
     state = IMA_ADPCM_state.state;
@@ -460,7 +460,7 @@ SDL_LoadWAV_RW(SDL_RWops * src, int freesrc,
         }
         /* 2 Uint32's for chunk header+len, plus the lenread */
         headerDiff += lenread + 2 * sizeof(Uint32);
-    } while ((chunk.magic == FACT) || (chunk.magic == LIST) || (chunk.magic == BEXT));
+    } while ((chunk.magic == FACT) || (chunk.magic == LIST) || (chunk.magic == BEXT) || (chunk.magic == JUNK));
 
     /* Decode the audio data format */
     format = (WaveFMT *) chunk.data;

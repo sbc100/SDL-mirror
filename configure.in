@@ -2386,15 +2386,6 @@ AC_HELP_STRING([--enable-pthread-sem], [use pthread semaphores [[default=yes]]])
                 AC_MSG_RESULT($have_sem_timedwait)
             fi
 
-            AC_MSG_CHECKING(for pthread_spin_trylock)
-            AC_TRY_LINK_FUNC(pthread_spin_trylock, [
-              has_pthread_spin_trylock=yes
-              AC_DEFINE(HAVE_PTHREAD_SPINLOCK, 1, [ ])
-            ],[
-              has_pthread_spin_trylock=no
-            ])
-            AC_MSG_RESULT($has_pthread_spin_trylock)
-
             AC_CHECK_HEADER(pthread_np.h, have_pthread_np_h=yes, have_pthread_np_h=no, [ #include <pthread.h> ])
             if test x$have_pthread_np_h = xyes; then
                 AC_DEFINE(HAVE_PTHREAD_NP_H, 1, [ ])
@@ -2498,8 +2489,25 @@ AC_HELP_STRING([--enable-directx], [use DirectX for Windows audio/video [[defaul
         AC_CHECK_HEADER(ddraw.h, have_ddraw=yes)
         AC_CHECK_HEADER(dsound.h, have_dsound=yes)
         AC_CHECK_HEADER(dinput.h, have_dinput=yes)
-        AC_CHECK_HEADER(xaudio2.h, have_xaudio2=yes)
         AC_CHECK_HEADER(dxgi.h, have_dxgi=yes)
+        AC_CHECK_HEADER(xaudio2.h, have_xaudio2=yes)
+        AC_CHECK_HEADER(xinput.h, have_xinput=yes)
+
+        if test x$have_ddraw = xyes; then
+            AC_DEFINE(HAVE_DDRAW_H, 1, [ ])
+        fi
+        if test x$have_dinput = xyes; then
+            AC_DEFINE(HAVE_DINPUT_H, 1, [ ])
+        fi
+        if test x$have_dsound = xyes; then
+            AC_DEFINE(HAVE_DSOUND_H, 1, [ ])
+        fi
+        if test x$have_dxgi = xyes; then
+            AC_DEFINE(HAVE_DXGI_H, 1, [ ])
+        fi
+        if test x$have_xinput = xyes; then
+            AC_DEFINE(HAVE_XINPUT_H, 1, [ ])
+        fi
 
         SUMMARY_video="${SUMMARY_video} directx"
         SUMMARY_audio="${SUMMARY_audio} directx"
@@ -2929,9 +2937,6 @@ AC_HELP_STRING([--enable-render-d3d], [enable the Direct3D render driver [[defau
                 AC_DEFINE(SDL_VIDEO_RENDER_D3D11, 1, [ ])
             fi
         fi
-        if test x$have_dxgi = xyes; then
-            AC_DEFINE(HAVE_DXGI_H, 1, [ ])
-        fi
         # Set up files for the audio library
         if test x$enable_audio = xyes; then
             AC_DEFINE(SDL_AUDIO_DRIVER_WINMM, 1, [ ])
@@ -2948,20 +2953,29 @@ AC_HELP_STRING([--enable-render-d3d], [enable the Direct3D render driver [[defau
         fi
         # Set up files for the joystick library
         if test x$enable_joystick = xyes; then
-            if test x$have_dinput = xyes; then
-                AC_DEFINE(SDL_JOYSTICK_DINPUT, 1, [ ])
-                SOURCES="$SOURCES $srcdir/src/joystick/windows/SDL_dxjoystick.c"
-                EXTRA_LDFLAGS="$EXTRA_LDFLAGS -ldinput8 -ldxguid -ldxerr8"
+            if test x$have_dinput = xyes -o x$have_xinput = xyes; then
+                if test x$have_xinput = xyes; then
+                    AC_DEFINE(SDL_JOYSTICK_XINPUT, 1, [ ])
+                fi
+                if test x$have_dinput = xyes; then
+                    AC_DEFINE(SDL_JOYSTICK_DINPUT, 1, [ ])
+                    EXTRA_LDFLAGS="$EXTRA_LDFLAGS -ldinput8 -ldxguid -ldxerr8"
+                fi
             else
                 AC_DEFINE(SDL_JOYSTICK_WINMM, 1, [ ])
-                SOURCES="$SOURCES $srcdir/src/joystick/windows/SDL_mmjoystick.c"
             fi
+            SOURCES="$SOURCES $srcdir/src/joystick/windows/*.c"
             have_joystick=yes
         fi
         if test x$enable_haptic = xyes; then
-            if test x$have_dinput = xyes; then
-                AC_DEFINE(SDL_HAPTIC_DINPUT, 1, [ ])
-                SOURCES="$SOURCES $srcdir/src/haptic/windows/SDL_syshaptic.c"
+            if test x$have_dinput = xyes -o x$have_xinput = xyes; then
+                if test x$have_xinput = xyes; then
+                    AC_DEFINE(SDL_HAPTIC_XINPUT, 1, [ ])
+                fi
+                if test x$have_dinput = xyes; then
+                    AC_DEFINE(SDL_HAPTIC_DINPUT, 1, [ ])
+                fi
+                SOURCES="$SOURCES $srcdir/src/haptic/windows/*.c"
                 have_haptic=yes
             fi
         fi
@@ -3135,6 +3149,7 @@ AC_HELP_STRING([--enable-render-d3d], [enable the Direct3D render driver [[defau
         EXTRA_LDFLAGS="$EXTRA_LDFLAGS -Wl,-framework,CoreAudio"
         EXTRA_LDFLAGS="$EXTRA_LDFLAGS -Wl,-framework,AudioToolbox"
         EXTRA_LDFLAGS="$EXTRA_LDFLAGS -Wl,-framework,CoreGraphics"
+        EXTRA_LDFLAGS="$EXTRA_LDFLAGS -Wl,-framework,CoreMotion"
         ;;
     *-*-darwin* )
         # This could be either full "Mac OS X", or plain "Darwin" which is
@@ -3202,6 +3217,7 @@ AC_HELP_STRING([--enable-render-d3d], [enable the Direct3D render driver [[defau
         # The Mac OS X platform requires special setup.
         EXTRA_CFLAGS="$EXTRA_CFLAGS -fpascal-strings"
         EXTRA_LDFLAGS="$EXTRA_LDFLAGS -lobjc"
+        EXTRA_LDFLAGS="$EXTRA_LDFLAGS -Wl,-framework,CoreVideo"
         EXTRA_LDFLAGS="$EXTRA_LDFLAGS -Wl,-framework,Cocoa"
         EXTRA_LDFLAGS="$EXTRA_LDFLAGS -Wl,-framework,Carbon"
         EXTRA_LDFLAGS="$EXTRA_LDFLAGS -Wl,-framework,IOKit"
