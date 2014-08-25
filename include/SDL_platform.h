@@ -146,16 +146,15 @@
  * Ref: http://www.chromium.org/nativeclient/pnacl/stability-of-the-pnacl-bitcode-abi
  */
 #if defined(__native_client__)
-#undef __LINUX__
+#ifdef __LINUX__
+#error foo
+#endif
 #undef __NACL__
 #define __NACL__ 1
-#endif
-#if defined(__pnacl__)
-#undef __LINUX__
-#undef __PNACL__
-#define __PNACL__ 1
-/* PNACL with newlib supports static linking only */
+#ifdef _NEWLIB_VERSION
+/* NaCl with newlib supports static linking only */
 #define __SDL_NOGETPROCADDR__
+#endif
 #endif
 
 
