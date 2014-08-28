@@ -33,7 +33,7 @@ TARGET  = libSDL2.la
 OBJECTS = @OBJECTS@
 VERSION_OBJECTS = @VERSION_OBJECTS@
 
-SDLMAIN_TARGET = libSDL2main.a
+SDLMAIN_TARGET = libSDL2main.la
 SDLMAIN_OBJECTS = @SDLMAIN_OBJECTS@
 
 SDLTEST_TARGET = libSDL2_test.a
@@ -138,14 +138,13 @@ update-revision:
 .PHONY: all update-revision install install-bin install-hdrs install-lib install-data uninstall uninstall-bin uninstall-hdrs uninstall-lib uninstall-data clean distclean dist $(OBJECTS:.lo=.d)
 
 $(objects)/$(TARGET): $(OBJECTS) $(VERSION_OBJECTS)
-	$(RUN_CMD_LTLINK)$(LIBTOOL) --tag=CC --mode=link $(CC) -o $@ $(OBJECTS) $(VERSION_OBJECTS) $(LDFLAGS) $(EXTRA_LDFLAGS) $(LT_LDFLAGS)
+	$(RUN_CMD_LTLINK)$(LIBTOOL) --tag=CC --mode=link $(CC) -o $@ $^ $(LDFLAGS) $(EXTRA_LDFLAGS) $(LT_LDFLAGS)
 
 $(objects)/$(SDLMAIN_TARGET): $(SDLMAIN_OBJECTS)
-	$(RUN_CMD_AR)$(AR) cru $@ $(SDLMAIN_OBJECTS)
-	$(RUN_CMD_RANLIB)$(RANLIB) $@
+	$(RUN_CMD_LTLINK)$(LIBTOOL) --tag=CC --mode=link $(CC) -o $@ $^ $(LDFLAGS) $(EXTRA_LDFLAGS) $(LT_LDFLAGS)
 
 $(objects)/$(SDLTEST_TARGET): $(SDLTEST_OBJECTS)
-	$(RUN_CMD_AR)$(AR) cru $@ $(SDLTEST_OBJECTS)
+	$(RUN_CMD_AR)$(AR) cru $@ $^
 	$(RUN_CMD_RANLIB)$(RANLIB) $@
 
 install: all install-bin install-hdrs install-lib install-data
@@ -167,8 +166,7 @@ install-hdrs: update-revision
 install-lib: $(objects) $(objects)/$(TARGET) $(objects)/$(SDLMAIN_TARGET) $(objects)/$(SDLTEST_TARGET)
 	$(SHELL) $(auxdir)/mkinstalldirs $(DESTDIR)$(libdir)
 	$(LIBTOOL) --mode=install $(INSTALL) $(objects)/$(TARGET) $(DESTDIR)$(libdir)/$(TARGET)
-	$(INSTALL) -m 644 $(objects)/$(SDLMAIN_TARGET) $(DESTDIR)$(libdir)/$(SDLMAIN_TARGET)
-	$(RANLIB) $(DESTDIR)$(libdir)/$(SDLMAIN_TARGET)
+	$(LIBTOOL) --mode=install $(INSTALL) $(objects)/$(SDLMAIN_TARGET) $(DESTDIR)$(libdir)/$(SDLMAIN_TARGET)
 	$(INSTALL) -m 644 $(objects)/$(SDLTEST_TARGET) $(DESTDIR)$(libdir)/$(SDLTEST_TARGET)
 	$(RANLIB) $(DESTDIR)$(libdir)/$(SDLTEST_TARGET)
 install-data:
@@ -189,7 +187,7 @@ uninstall-hdrs:
 	-rmdir $(DESTDIR)$(includedir)/SDL2
 uninstall-lib:
 	$(LIBTOOL) --mode=uninstall rm -f $(DESTDIR)$(libdir)/$(TARGET)
-	rm -f $(DESTDIR)$(libdir)/$(SDLMAIN_TARGET)
+	$(LIBTOOL) --mode=uninstall rm -f $(DESTDIR)$(libdir)/$(SDLMAIN_TARGET)
 	rm -f $(DESTDIR)$(libdir)/$(SDLTEST_TARGET)
 uninstall-data:
 	rm -f $(DESTDIR)$(datadir)/aclocal/sdl2.m4
