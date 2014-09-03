@@ -3,11 +3,9 @@
 #ifndef _SDL_naclaudio_h
 #define _SDL_naclaudio_h
 
-extern "C" {
 #include "SDL_audio.h"
 #include "../SDL_sysaudio.h"
 #include "SDL_mutex.h"
-}
 
 #include <ppapi/c/ppb_audio.h>
 
@@ -18,6 +16,10 @@ struct SDL_PrivateAudioData {
   SDL_mutex* mutex;
   int sample_frame_count;
   PP_Resource audio;
+
+  const struct PPB_Core_1_0* core_interface;
+  const struct PPB_Audio_1_1* audio_interface;
+  const struct PPB_AudioConfig_1_1* audio_config_interface;
 };
 
 #endif /* _SDL_naclaudio_h */

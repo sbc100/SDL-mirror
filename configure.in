@@ -919,9 +919,9 @@ AC_HELP_STRING([--enable-naclvideo], [enable the nacl video driver [[default=yes
                   , enable_naclvideo=yes)
     if test x$enable_video = xyes -a x$enable_naclvideo = xyes; then
         AC_DEFINE(SDL_VIDEO_DRIVER_NACL)
-        SOURCES="$SOURCES $srcdir/src/video/nacl/*.cc"
-        EXTRA_LDFLAGS="-lnacl_io -l${NACL_CPP_LIB:-stdc++} $EXTRA_LDFLAGS"
-        SDL_LIBS="-Wl,-uPPP_InitializeModule -lppapi -lSDLmain $SDL_LIBS -ltar"
+        SOURCES="$SOURCES $srcdir/src/video/nacl/*.c"
+        EXTRA_LDFLAGS="-lppapi_simple -l${NACL_CPP_LIB:-stdc++} $EXTRA_LDFLAGS"
+        SDL_LIBS="-Wl,-unacl_main -Wl,-undefined=PSUserCreateInstance -lSDLmain $SDL_LIBS -lppapi_gles2 -lcli_main -ltar -lppapi_simple -lnacl_io -lppapi_cpp -lppapi -lm -l${NACL_CPP_LIB:-stdc++}"
         SDL_CFLAGS="$SDL_CFLAGS -Dmain=SDL_main"
     fi
 
@@ -930,7 +930,7 @@ AC_HELP_STRING([--enable-naclaudio], [enable the nacl audio driver [[default=yes
                   , enable_naclaudio=yes)
     if test x$enable_audio = xyes -a x$enable_naclaudio = xyes; then
         AC_DEFINE(SDL_AUDIO_DRIVER_NACL)
-        SOURCES="$SOURCES $srcdir/src/audio/nacl/*.cc"
+        SOURCES="$SOURCES $srcdir/src/audio/nacl/*.c"
     fi
 }
 
