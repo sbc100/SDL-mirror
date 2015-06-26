@@ -30,6 +30,9 @@
 #include <math.h>
 #include <ppapi_simple/ps_event.h>
 
+#define PPAPI_KEY_CTRL 17
+#define PPAPI_KEY_ALT 18
+
 static Uint8 translateButton(int32_t button) {
     switch (button) {
         case PP_INPUTEVENT_MOUSEBUTTON_LEFT:
@@ -110,9 +113,9 @@ static SDLKey translateKey(uint32_t code) {
             return SDLK_ESCAPE;
         case 16:
             return SDLK_LSHIFT;
-        case 17:
+        case PPAPI_KEY_CTRL:
             return SDLK_LCTRL;
-        case 18:
+        case PPAPI_KEY_ALT:
             return SDLK_LALT;
         case 32:
             return SDLK_SPACE;
@@ -175,6 +178,8 @@ static SDLKey translateKey(uint32_t code) {
 
 void HandleInputEvent(_THIS, PP_Resource event) {
     static Uint8 last_scancode = 0;
+    static int alt_down = 0;
+    static int ctrl_down = 0;
     PP_InputEvent_Type type;
     PP_InputEvent_Modifier modifiers;
     Uint8 button;
@@ -260,11 +265,43 @@ void HandleInputEvent(_THIS, PP_Resource event) {
 
             state = SDL_PRESSED;
             if (type == PP_INPUTEVENT_TYPE_KEYDOWN) {
+#if !defined(NDEBUG)
+              fprintf(stderr, "KEYDOWN: %d\n", keysym.scancode);
+#endif
+              /*
+               * PPAPI + Javascript recently started skipping KEYPRESS
+               * events for letter + number keys when ALT is pressed.
+               * Rather than wait for KEYPRESS to complete a keystroke,
+               * emit immediately when ALT is pressed.
+               * A similar situation exists for CTRL-H, CTRL-M, CTRL-Space.
+               * Handling these explicitly as well (they require control
+               * code decoding).
+               * NOTE: The old behavior continues on OSX, so we must
+               * also ignore KEYPRESS codes in case we are on OSX.
+               */
+              if (keysym.scancode == PPAPI_KEY_CTRL) ctrl_down = 1;
+              if (keysym.scancode == PPAPI_KEY_ALT) alt_down = 1;
               last_scancode = keysym.scancode;
-              if (keysym.sym >= ' ' &&  keysym.sym <= 126) {
+              if (ctrl_down && keysym.scancode == ' ') {
+                /* Ctrl-Space == Ctrl-@ == '\0' */
+                keysym.unicode = 0;
+              } else if (ctrl_down && (keysym.scancode == 'H' ||
+                                       keysym.scancode == 'M')) {
+                /* Convert from [A - Z] to [Ctrl-A - Ctrl-Z]. */
+                keysym.unicode = keysym.scancode - '@';
+              } else if (keysym.sym >= ' ' &&  keysym.sym <= 126 && !alt_down) {
                 return;
               }
             } else if (type == PP_INPUTEVENT_TYPE_CHAR) {
+#if !defined(NDEBUG)
+              fprintf(stderr, "CHAR: %d %d %d\n",
+                  keysym.sym, keysym.unicode, last_scancode);
+#endif
+              if (ctrl_down &&
+                  (keysym.sym == ' ' ||
+                   keysym.sym == 'H' ||
+                   keysym.sym == 'M')) return;
+              if (alt_down) return;
               if (keysym.sym >= ' ' &&  keysym.sym <= 126) {
                 keysym.scancode = translateAscii(keysym.unicode);
                 keysym.sym = translateKey(keysym.scancode);
@@ -273,6 +310,11 @@ void HandleInputEvent(_THIS, PP_Resource event) {
                 keysym.sym = translateKey(keysym.scancode);
               }
             } else {  // event->type == PP_INPUTEVENT_TYPE_KEYUP
+#if !defined(NDEBUG)
+              fprintf(stderr, "KEYUP: %d\n", keysym.scancode);
+#endif
+              if (keysym.scancode == PPAPI_KEY_CTRL) ctrl_down = 0;
+              if (keysym.scancode == PPAPI_KEY_ALT) alt_down = 0;
               state = SDL_RELEASED;
               last_scancode = 0;
             }
