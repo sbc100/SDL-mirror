@@ -418,16 +418,21 @@ static void create_aux_windows(_THIS)
     }
 
 	{
-		pid_t pid = getpid();
+		union align_pid {
+			pid_t pid;
+			long dummy;
+		} a_pid;
 		char hostname[256];
+		
+		a_pid.pid = getpid();
 
-		if (pid > 0 && gethostname(hostname, sizeof(hostname)) > -1) {
+		if (a_pid.pid > 0 && gethostname(hostname, sizeof(hostname)) > -1) {
 			Atom _NET_WM_PID = XInternAtom(SDL_Display, "_NET_WM_PID", False);
 			Atom WM_CLIENT_MACHINE = XInternAtom(SDL_Display, "WM_CLIENT_MACHINE", False);
 			
 			hostname[sizeof(hostname)-1] = '\0';
 			XChangeProperty(SDL_Display, WMwindow, _NET_WM_PID, XA_CARDINAL, 32,
-					PropModeReplace, (unsigned char *)&pid, 1);
+					PropModeReplace, (unsigned char *)&(a_pid.pid), 1);
 			XChangeProperty(SDL_Display, WMwindow, WM_CLIENT_MACHINE, XA_STRING, 8,
 					PropModeReplace, (unsigned char *)hostname, SDL_strlen(hostname));
 		}
@@ -1476,7 +1481,10 @@ int X11_SetGammaRamp(_THIS, Uint16 *ramp)
 		xcmap[i].blue  = ramp[2*256+c];
 		xcmap[i].flags = (DoRed|DoGreen|DoBlue);
 	}
-	XStoreColors(GFX_Display, SDL_XColorMap, xcmap, ncolors);
+	if ( XStoreColors(GFX_Display, SDL_XColorMap, xcmap, ncolors) != 0 ) {
+		SDL_SetError("Setting gamma correction failed");
+		return(-1);
+	}
 	XSync(GFX_Display, False);
 	return(0);
 }
