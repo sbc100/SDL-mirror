@@ -3042,7 +3042,16 @@ case "$ARCH" in
     SDL_STATIC_LIBS="\${libdir}/libSDLmain.a \${libdir}/libSDL.a $EXTRA_LDFLAGS"
     ;;
   *)
-    SDL_STATIC_LIBS="$SDL_LIBS $EXTRA_LDFLAGS"
+    case "$host" in
+      *-nacl)
+        # NaCl's EXTRA_LDFLAGS are already part of SDL_LIBS since they are
+        # always needed at link time.
+        SDL_STATIC_LIBS="$SDL_LIBS"
+        ;;
+      *)
+        SDL_STATIC_LIBS="$SDL_LIBS $EXTRA_LDFLAGS"
+        ;;
+    esac
     ;;
 esac
 
