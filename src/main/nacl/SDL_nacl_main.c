@@ -35,6 +35,8 @@
 #include <nacl_main.h>
 #include <unistd.h>
 
+#undef main
+
 extern void NACL_SetScreenResolution(int width, int height);
 
 static int
@@ -75,11 +77,11 @@ ProcessArgs(int argc, char** argv) {
     return 0;
 }
 
-/* This is started in a worker thread by ppapi_simple! */
+/* This main function is called a worker thread by ppapi_simple */
 int
-nacl_main(int argc, char *argv[])
+main(int argc, char *argv[])
 {
-    SDL_TRACE("nacl_main\n");
+    SDL_TRACE("SDL_nacl_main\n");
     PSEvent* ps_event;
     PP_Resource event;
     struct PP_Rect rect;
