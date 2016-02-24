@@ -956,8 +956,8 @@ AC_HELP_STRING([--enable-naclvideo], [enable the nacl video driver [[default=yes
     if test x$enable_video = xyes -a x$enable_naclvideo = xyes; then
         AC_DEFINE(SDL_VIDEO_DRIVER_NACL)
         SOURCES="$SOURCES $srcdir/src/video/nacl/*.c"
-        EXTRA_LDFLAGS="-lppapi_simple -l${NACL_CXX_LIB:-stdc++} $EXTRA_LDFLAGS"
-        SDL_LIBS="-Wl,-undefined=PSUserMainGet -lSDLmain $SDL_LIBS -lppapi_gles2 -lcli_main -lnacl_spawn -ltar -lppapi_simple -lnacl_io -lppapi -lm -l${NACL_CXX_LIB:-stdc++}"
+        SDL_LIBS="-Wl,-undefined=PSUserMainGet -lSDLmain $SDL_LIBS"
+        EXTRA_LDFLAGS="-lppapi_gles2 -lcli_main -lnacl_spawn -ltar -lppapi_simple -lnacl_io -lppapi -lm -l${NACL_CXX_LIB:-stdc++} $EXTRA_LDFLAGS"
         SDL_CFLAGS="$SDL_CFLAGS -Dmain=SDL_main"
     fi
 
@@ -987,7 +987,6 @@ CheckOpenGLRegal()
             AC_DEFINE(SDL_VIDEO_OPENGL)
             AC_DEFINE(SDL_VIDEO_OPENGL_REGAL)
             EXTRA_LDFLAGS="-lRegal -lglslopt -lppapi_gles2 ${EXTRA_LDFLAGS}"
-            SDL_LIBS="-lRegal -lglslopt -lppapi_gles2 ${SDL_LIBS}"
         fi
     fi
 }
@@ -3042,16 +3041,15 @@ case "$ARCH" in
     SDL_STATIC_LIBS="\${libdir}/libSDLmain.a \${libdir}/libSDL.a $EXTRA_LDFLAGS"
     ;;
   *)
-    case "$host" in
-      *-nacl)
-        # NaCl's EXTRA_LDFLAGS are already part of SDL_LIBS since they are
-        # always needed at link time.
-        SDL_STATIC_LIBS="$SDL_LIBS"
-        ;;
-      *)
-        SDL_STATIC_LIBS="$SDL_LIBS $EXTRA_LDFLAGS"
-        ;;
-    esac
+    SDL_STATIC_LIBS="$SDL_LIBS $EXTRA_LDFLAGS"
+    ;;
+esac
+
+case "$host" in
+  *-nacl)
+    # NaCl's EXTRA_LDFLAGS are always needed, even when using dynamic
+    # linking.
+    SDL_LIBS="${SDL_LIBS/-lpthread/} $EXTRA_LDFLAGS"
     ;;
 esac
 
